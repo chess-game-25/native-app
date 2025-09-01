@@ -1,6 +1,7 @@
 import { SplashScreen, useRouter } from "expo-router";
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from "axios";
 
 type AuthState = {
     token: string | null;
@@ -10,6 +11,8 @@ type AuthState = {
 }
 
 const AuthStorageKey = 'authState';
+
+const BACKEND_URL = `http://${process.env.EXPO_PUBLIC_BACKEND_SERVER_IP}:${process.env.EXPO_PUBLIC_BACKEND_PORT}`;
 
 // Need to hide splash screen once the request from the server is complete
 SplashScreen.preventAutoHideAsync();
@@ -52,13 +55,17 @@ export function AuthProvider({ children }: PropsWithChildren){
         getAuthFromStorage();
     }, []);
 
-
-
-    const logIn = (phoneNumber: string, otp: string) => {
-        // TODO: Perform Login and get token 
-        setToken('some-auth-token');
-        storeAuthState({ token: 'some-auth-token' });
-        router.replace('/home');
+    const logIn = async (phoneNumber: string, otp: string) => {
+        try{
+            const response = await axios.post(`${BACKEND_URL}/api/auth/login`, { phoneNumber, otp });
+            if(response.data.success){
+                setToken(response.data.token);
+                storeAuthState({ token: response.data.token });
+                router.replace('/home');
+            }
+        }catch(err){
+            console.log('Login error:', err);
+        }
     };
 
     const logOut = () => {
