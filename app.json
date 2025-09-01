@@ -4,12 +4,12 @@
     "slug": "native-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/splash-icon.png",
+    "icon": "./assets/images/chess_icon.png",
     "scheme": "nativeapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/splash-icon.png",
+      "image": "./assets/images/chess_icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#F5F5F5"
     },
@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo.png",
+        "foregroundImage": "./assets/images/chess_icon.png",
         "backgroundColor": "#F5F5F5"
       },
       "edgeToEdgeEnabled": true
@@ -26,14 +26,14 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/logo.png"
+      "favicon": "./assets/images/chess_icon.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/chess_icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#F5F5F5"
