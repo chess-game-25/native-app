@@ -3,29 +3,31 @@ import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type AuthState = {
-    isLoggedIn: boolean;
+    token: string | null;
     isReady: boolean;
-    logIn: ()=>void
+    logIn: (phoneNumber : string, otp : string)=>void
     logOut: ()=>void
 }
 
 const AuthStorageKey = 'authState';
 
+// Need to hide splash screen once the request from the server is complete
 SplashScreen.preventAutoHideAsync();
 
+
 export const AuthContext = createContext<AuthState>({
-    isLoggedIn: false,
-    isReady: false,
+    token: null,
+    isReady: false, // For the token 
     logIn: () => {},
     logOut: () => {}
 });
 
 export function AuthProvider({ children }: PropsWithChildren){
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [token, setToken] = useState<string | null>(null);
     const router = useRouter();
     const [isReady, setIsReady] = useState(false);
 
-    const storeAuthState = async (newState : { isLoggedIn: boolean }) => {
+    const storeAuthState = async (newState : { token: string | null }) => {
         try{
             const jsonValue = JSON.stringify(newState);
             await AsyncStorage.setItem(AuthStorageKey, jsonValue);
@@ -36,13 +38,11 @@ export function AuthProvider({ children }: PropsWithChildren){
 
     useEffect(()=>{
         const getAuthFromStorage = async ()=>{
-            // TODO: Get from the server
-            await new Promise((resolve) => setTimeout(resolve, 1000));
             try{
                 const authState = await AsyncStorage.getItem(AuthStorageKey);
                 if(authState){
                     const auth = JSON.parse(authState);
-                    setIsLoggedIn(auth.isLoggedIn);
+                    setToken(auth.token);
                 }
             }catch(err){
                 console.log('Error getting auth state from storage:', err);
@@ -52,26 +52,23 @@ export function AuthProvider({ children }: PropsWithChildren){
         getAuthFromStorage();
     }, []);
 
-    useEffect(()=>{
-        if(isReady){
-            SplashScreen.hideAsync();
-        }
-    },[isReady]);
 
-    const logIn = () => {
-        setIsLoggedIn(true);
-        storeAuthState({ isLoggedIn: true });
+
+    const logIn = (phoneNumber: string, otp: string) => {
+        // TODO: Perform Login and get token 
+        setToken('some-auth-token');
+        storeAuthState({ token: 'some-auth-token' });
         router.replace('/home');
     };
 
     const logOut = () => {
-        setIsLoggedIn(false);
-        storeAuthState({ isLoggedIn: false });
+        setToken(null);
+        storeAuthState({ token: null });
         router.replace('/login');
     };
 
     return (<AuthContext.Provider value={{
-        isLoggedIn,
+        token,
         isReady,
         logIn,
         logOut

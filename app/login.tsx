@@ -10,7 +10,7 @@ export default function LoginScreen() {
     <Stack.Screen name="login" options={{ headerShown: false }} />
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#fff" }}>
         <Text>Login Screen</Text>
-        <Button title="Login" onPress={() => authContext.logIn()} />
+        <Button title="Login" onPress={() => authContext.logIn("", "")} />
       </View>
     </>
   );
