@@ -2,6 +2,7 @@ import { SplashScreen, useRouter } from "expo-router";
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from "axios";
+import Toast from "react-native-toast-message";
 
 type AuthState = {
     token: string | null;
@@ -61,10 +62,23 @@ export function AuthProvider({ children }: PropsWithChildren){
             if(response.data.success){
                 setToken(response.data.token);
                 storeAuthState({ token: response.data.token });
+                Toast.show({
+                    type: "appSuccess",
+                    text1: "Success",
+                    text2: "Logged in successfully",
+                    position: "top",
+                    visibilityTime: 4000,
+                })
                 router.replace('/home');
             }
         }catch(err){
-            console.log('Login error:', err);
+            Toast.show({
+                type:"appError",
+                text1: "Error",
+                text2: "Failed to log in",
+                position: "top",
+                visibilityTime: 4000,
+            })
         }
     };
 

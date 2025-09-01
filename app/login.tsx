@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { Text, View, TextInput, TouchableOpacity, StyleSheet, ImageBackground } from "react-native";
 import { useFonts } from 'expo-font'; 
 import axios from "axios";
+import Toast from "react-native-toast-message";
 
 export default function LoginScreen() {
   const authContext = useContext(AuthContext);
@@ -32,11 +33,28 @@ export default function LoginScreen() {
         const response = await axios.post(`${BACKEND_URL}/api/auth/initiate_login`, { phoneNumber });
         if (response.status === 200) {
             setStep('otp');
+            Toast.show({
+                type: 'appSuccess',
+                text1: 'Success',
+                text2: 'OTP sent successfully',
+                position: 'top',
+                visibilityTime: 4000,
+            });
         } else {
-            setError('Failed to send OTP');
+            Toast.show({
+            type: 'appError',
+            text1: 'Error',
+            text2: 'Failed to send OTP',
+            position: 'top',
+            });
         }
     }catch(err){
-        setError('Failed to send OTP');
+        Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Failed to send OTP',
+            position: 'top',
+        });
     }finally{
         setSendingOtp(false);
     }
@@ -49,11 +67,30 @@ export default function LoginScreen() {
         const response = await axios.post(`${BACKEND_URL}/api/auth/initiate_request`, { phoneNumber });
         if (response.status === 200) {
             setStep('otp');
+            Toast.show({
+                type: 'appSuccess',
+                text1: 'Success',
+                text2: 'OTP resent successfully',
+                position: 'top',
+                visibilityTime: 4000,
+            });
         } else {
-            setError('Failed to resend OTP');
+            Toast.show({
+                type: 'appError',
+                text1: 'Error',
+                text2: 'Failed to resend OTP',
+                position: 'top',
+                visibilityTime: 4000,
+            });
         }
     } catch (err) {
-        setError('Failed to resend OTP');
+        Toast.show({
+            type: 'appError',
+            text1: 'Error',
+            text2: 'Failed to resend OTP',
+            position: 'top',
+            visibilityTime: 4000,
+        });
     } finally {
         setResending(false);
     }
@@ -62,14 +99,8 @@ export default function LoginScreen() {
   const handleSubmit = async () => {
     setError('');
     setSubmitting(true);
-    try{
-        await authContext.logIn(phoneNumber, otp);
-    }catch(err){
-        setError('Failed to log in');
-    }finally{
-        setSubmitting(false);
-    }
-
+    await authContext.logIn(phoneNumber, otp);
+    setSubmitting(false);
   };
 
   if (!fontsLoaded) {
